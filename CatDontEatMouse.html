@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Air Studio - Air Studio | Mobile</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --panel: #12121a;
+            --border: #1e1e2e;
+            --accent: #00d4aa;
+            --accent2: #ff6b9d;
+            --accent3: #ffb347;
+            --text: #e0e0e0;
+            --text2: #888;
+            --danger: #ff4757;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: -0.3px;
+        }
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #00b894);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.35);
+            animation: pulse-glow 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 4px 15px rgba(0, 212, 170, 0.35);
+            }
+            50% {
+                box-shadow: 0 4px 28px rgba(0, 212, 170, 0.7);
+            }
+        }
+        .connection-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4757;
+            transition: all 0.4s;
+            box-shadow: 0 0 8px currentColor;
+        }
+        .connection-dot.connected {
+            background: #00d4aa;
+            box-shadow: 0 0 14px #00d4aa;
+        }
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text2);
+        }
+
+        /* ============ MAIN LAYOUT ============ */
+        .main-container {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+
+        /* ============ CARD ============ */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            transition: border-color 0.3s;
+        }
+        .card.active-recording {
+            border-color: var(--danger);
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.25);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
+        }
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        .icon-camera {
+            background: rgba(0, 212, 170, 0.15);
+            color: var(--accent);
+        }
+        .icon-mic {
+            background: rgba(255, 107, 157, 0.15);
+            color: var(--accent2);
+        }
+        .icon-motion {
+            background: rgba(255, 179, 71, 0.15);
+            color: var(--accent3);
+        }
+        .icon-bilibili {
+            background: rgba(0, 161, 214, 0.2);
+            color: #00a1d6;
+        }
+
+        /* ============ VIDEO PREVIEW ============ */
+        .video-preview-wrap {
+            position: relative;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: #000;
+            aspect-ratio: 16/10;
+            margin-bottom: 10px;
+            border: 2px solid var(--border);
+            transition: border-color 0.3s;
+        }
+        .video-preview-wrap.recording {
+            border-color: var(--danger);
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+        }
+        .video-preview-wrap video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .recording-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .recording-indicator.active {
+            opacity: 1;
+        }
+        .rec-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff4757;
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+        .timer-display {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-variant-numeric: tabular-nums;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .timer-display.active {
+            opacity: 1;
+        }
+
+        /* ============ BUTTONS ============ */
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .btn:active {
+            transform: scale(0.94);
+            transition: transform 0.1s;
+        }
+        .btn-record {
+            background: #ff4757;
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(255, 71, 87, 0.4);
+            flex: 1;
+            min-width: 100px;
+            justify-content: center;
+            font-size: 1rem;
+            padding: 14px 20px;
+        }
+        .btn-record:hover {
+            box-shadow: 0 6px 24px rgba(255, 71, 87, 0.6);
+        }
+        .btn-record.recording {
+            background: #fff;
+            color: #ff4757;
+            box-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
+            animation: pulse-rec 1.2s ease-in-out infinite;
+        }
+        @keyframes pulse-rec {
+            0%,
+            100% {
+                box-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                box-shadow: 0 4px 36px rgba(255, 255, 255, 0.85);
+            }
+        }
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(0, 212, 170, 0.35);
+        }
+        .btn-accent:hover {
+            box-shadow: 0 6px 22px rgba(0, 212, 170, 0.55);
+        }
+        .btn-sm {
+            padding: 7px 14px;
+            font-size: 0.75rem;
+            border-radius: 20px;
+        }
+        .btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(30%);
+        }
+
+        /* ============ MOTION PANEL ============ */
+        .motion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            text-align: center;
+        }
+        .motion-item {
+            background: var(--glass);
+            border-radius: var(--radius-sm);
+            padding: 10px 6px;
+            border: 1px solid var(--border);
+        }
+        .motion-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            color: var(--accent3);
+            letter-spacing: -0.5px;
+        }
+        .motion-label {
+            font-size: 0.65rem;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+        .motion-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: #2a2a3a;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        .motion-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--accent3);
+            transition: width 0.15s ease-out;
+        }
+        .motion-status {
+            font-size: 0.7rem;
+            color: var(--text2);
+            text-align: center;
+            margin-top: 6px;
+        }
+        .motion-active-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(255, 179, 71, 0.2);
+            color: var(--accent3);
+            animation: pulse-glow-amber 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-glow-amber {
+            0%,
+            100% {
+                box-shadow: 0 0 8px rgba(255, 179, 71, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 18px rgba(255, 179, 71, 0.7);
+            }
+        }
+
+        /* ============ UPLOAD SECTION ============ */
+        .upload-list {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.78rem;
+        }
+        .upload-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            background: var(--glass);
+            gap: 8px;
+        }
+        .upload-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .upload-size {
+            color: var(--text2);
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+        .upload-status {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+        .status-ready {
+            background: rgba(0, 212, 170, 0.15);
+            color: var(--accent);
+        }
+        .status-uploading {
+            background: rgba(255, 179, 71, 0.15);
+            color: var(--accent3);
+            animation: pulse-glow-amber 1s infinite;
+        }
+        .status-done {
+            background: rgba(0, 212, 170, 0.25);
+            color: #00ffcc;
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e1e2e;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 999;
+            pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.success {
+            border-color: var(--accent);
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.3);
+        }
+        .toast.error {
+            border-color: var(--danger);
+            box-shadow: 0 10px 40px rgba(255, 71, 87, 0.3);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (min-width: 600px) {
+            .main-container {
+                padding: 20px;
+                gap: 16px;
+            }
+            .btn-record {
+                font-size: 1.1rem;
+                padding: 16px 24px;
+            }
+            .video-preview-wrap {
+                aspect-ratio: 16/9;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">🌬️</div>
+            <span>Air Studio</span>
+        </div>
+        <div class="header-status">
+            <div class="connection-dot" id="connectionDot" title="Connection status with computer"></div>
+            <span id="connectionText">Disconnected</span>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-container">
+
+        <!-- AIR CAMERA + AIR MICRO PHONE -->
+        <div class="card" id="cameraCard">
+            <div class="card-header">
+                <div class="card-icon icon-camera">📷</div>
+                <span>Air Camera & Air Micro Phone</span>
+            </div>
+            <div class="video-preview-wrap" id="videoWrap">
+                <video id="previewVideo" autoplay playsinline muted></video>
+                <div class="recording-indicator" id="recIndicator">
+                    <div class="rec-dot"></div> REC
+                </div>
+                <div class="timer-display" id="timerDisplay">00:00</div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-record" id="btnRecord" title="Start/Stop recording">
+                    ⏺️ Start Recording
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btnSwitchCamera" title="Switch front/rear camera">
+                    🔄 Flip
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btnSnapshot" title="Take a snapshot">
+                    📸 Snapshot
+                </button>
+            </div>
+            <div style="margin-top:8px;font-size:0.7rem;color:var(--text2);text-align:center;">
+                Capture video & audio simultaneously · Save to computer
+            </div>
+        </div>
+
+        <!-- AIR MOTION -->
+        <div class="card" id="motionCard">
+            <div class="card-header">
+                <div class="card-icon icon-motion">🌀</div>
+                <span>Air Motion · Motion Sensor</span>
+                <span class="motion-active-badge" id="motionBadge" style="margin-left:auto;"> sensing</span>
+            </div>
+            <div class="motion-grid">
+                <div class="motion-item">
+                    <div class="motion-value" id="motionX">0.00</div>
+                    <div class="motion-label">X Axis</div>
+                    <div class="motion-bar"><div class="motion-bar-fill" id="barX" style="width:50%"></div></div>
+                </div>
+                <div class="motion-item">
+                    <div class="motion-value" id="motionY">0.00</div>
+                    <div class="motion-label">Y Axis</div>
+                    <div class="motion-bar"><div class="motion-bar-fill" id="barY" style="width:50%"></div></div>
+                </div>
+                <div class="motion-item">
+                    <div class="motion-value" id="motionZ">9.81</div>
+                    <div class="motion-label">Z Axis</div>
+                    <div class="motion-bar"><div class="motion-bar-fill" id="barZ" style="width:50%"></div></div>
+                </div>
+            </div>
+            <div class="motion-status" id="motionStatus">📱 Real-time device motion monitoring</div>
+        </div>
+
+        <!-- BILIBILI UPLOAD -->
+        <div class="card" id="bilibiliCard">
+            <div class="card-header">
+                <div class="card-icon icon-bilibili">📺</div>
+                <span>Bilibili Publish</span>
+            </div>
+            <div class="upload-list" id="uploadList">
+                <div style="color:var(--text2);text-align:center;padding:20px;font-size:0.8rem;">
+                    No recordings yet<br>Recorded videos will appear here
+                </div>
+            </div>
+            <div class="btn-row" style="margin-top:10px;">
+                <button class="btn btn-accent btn-sm" id="btnUploadAll" disabled>
+                    🚀 Upload to Bilibili
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btnRefreshList">
+                    🔄 Refresh List
+                </button>
+            </div>
+            <div style="margin-top:6px;font-size:0.65rem;color:var(--text2);text-align:center;">
+                Videos uploaded to Bilibili via computer VB.NET service
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ============================================================
+        //  Air Studio - Frontend Core Script
+        //  Features: Air Camera, Air Micro Phone, Air Motion, Bilibili Upload
+        //  Target: VB.NET backend service on computer
+        // ============================================================
+
+        // ---------- Configuration ----------
+        const SERVER_URL = localStorage.getItem('air_studio_server') || window.location.origin;
+        // If accessing the computer service from a phone, configure the computer's IP, e.g.:
+        // const SERVER_URL = 'http://192.168.1.100:8899';
+        const API_BASE = SERVER_URL + '/api';
+        const WS_URL = SERVER_URL.replace(/^http/, 'ws') + '/ws';
+
+        // ---------- Global State ----------
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recordingStartTime = null;
+        let timerInterval = null;
+        let facingMode = 'user'; // 'user' front, 'environment' rear
+        let webSocket = null;
+        let wsReconnectTimer = null;
+        let motionData = { x: 0, y: 0, z: 9.81 };
+        let uploadedFiles = [];
+        let motionPermissionGranted = false;
+
+        // ---------- DOM Elements ----------
+        const previewVideo = document.getElementById('previewVideo');
+        const videoWrap = document.getElementById('videoWrap');
+        const recIndicator = document.getElementById('recIndicator');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const btnRecord = document.getElementById('btnRecord');
+        const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+        const btnSnapshot = document.getElementById('btnSnapshot');
+        const btnUploadAll = document.getElementById('btnUploadAll');
+        const btnRefreshList = document.getElementById('btnRefreshList');
+        const connectionDot = document.getElementById('connectionDot');
+        const connectionText = document.getElementById('connectionText');
+        const uploadList = document.getElementById('uploadList');
+        const toast = document.getElementById('toast');
+        const motionBadge = document.getElementById('motionBadge');
+        const motionStatus = document.getElementById('motionStatus');
+        const cameraCard = document.getElementById('cameraCard');
+
+        // ---------- Toast Notification ----------
+        let toastTimeout;
+
+        function showToast(message, type = '') {
+            clearTimeout(toastTimeout);
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ---------- WebSocket Connection ----------
+        function connectWebSocket() {
+            if (webSocket && webSocket.readyState === WebSocket.OPEN) return;
+
+            try {
+                webSocket = new WebSocket(WS_URL);
+                webSocket.onopen = () => {
+                    console.log('🔗 WebSocket connected');
+                    setConnectionStatus(true);
+                    if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+                    // Send device info
+                    sendWSMessage({
+                        type: 'device_info',
+                        device: 'phone',
+                        userAgent: navigator.userAgent,
+                        screenWidth: screen.width,
+                        screenHeight: screen.height
+                    });
+                };
+                webSocket.onmessage = (event) => {
+                    try {
+                        const msg = JSON.parse(event.data);
+                        handleWSMessage(msg);
+                    } catch (e) {
+                        console.log('WS message:', event.data);
+                    }
+                };
+                webSocket.onclose = () => {
+                    console.log('🔌 WebSocket disconnected');
+                    setConnectionStatus(false);
+                    scheduleWSReconnect();
+                };
+                webSocket.onerror = () => {
+                    console.log('⚠️ WebSocket error');
+                    setConnectionStatus(false);
+                };
+            } catch (e) {
+                console.log('WebSocket creation failed:', e);
+                setConnectionStatus(false);
+                scheduleWSReconnect();
+            }
+        }
+
+        function scheduleWSReconnect() {
+            if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+            wsReconnectTimer = setTimeout(() => {
+                console.log('🔄 Attempting to reconnect WebSocket...');
+                connectWebSocket();
+            }, 3000);
+        }
+
+        function sendWSMessage(data) {
+            if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+                webSocket.send(JSON.stringify(data));
+            }
+        }
+
+        function handleWSMessage(msg) {
+            switch (msg.type) {
+                case 'remote_record_start':
+                    if (!isRecording) startRecording();
+                    break;
+                case 'remote_record_stop':
+                    if (isRecording) stopRecording();
+                    break;
+                case 'remote_snapshot':
+                    takeSnapshot();
+                    break;
+                case 'upload_complete':
+                    showToast('✅ Video uploaded to Bilibili!', 'success');
+                    refreshUploadList();
+                    break;
+                case 'upload_error':
+                    showToast('❌ Upload failed: ' + (msg.error || 'Unknown error'), 'error');
+                    break;
+                case 'pong':
+                    // Heartbeat response
+                    break;
+                default:
+                    console.log('Received message:', msg);
+            }
+        }
+
+        function setConnectionStatus(connected) {
+            if (connected) {
+                connectionDot.classList.add('connected');
+                connectionText.textContent = 'Connected';
+            } else {
+                connectionDot.classList.remove('connected');
+                connectionText.textContent = 'Disconnected';
+            }
+        }
+
+        // ---------- Camera & Microphone ----------
+        async function initCamera() {
+            try {
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(t => t.stop());
+                }
+                const constraints = {
+                    video: {
+                        facingMode: facingMode,
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 44100
+                    }
+                };
+                mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+                previewVideo.srcObject = mediaStream;
+                await previewVideo.play();
+                console.log('📷 Camera + microphone ready, facing:', facingMode);
+                showToast('📷 Air Camera & Air Mic ready', 'success');
+            } catch (err) {
+                console.error('Camera/microphone access failed:', err);
+                showToast('⚠️ Cannot access camera/microphone, please grant permission', 'error');
+                // Try audio only
+                try {
+                    const audioOnly = { audio: true };
+                    mediaStream = await navigator.mediaDevices.getUserMedia(audioOnly);
+                    previewVideo.srcObject = null;
+                    showToast('🎤 Audio-only mode (no camera)', 'success');
+                } catch (e2) {
+                    showToast('❌ Cannot access any media device', 'error');
+                }
+            }
+        }
+
+        async function switchCamera() {
+            facingMode = facingMode === 'user' ? 'environment' : 'user';
+            if (isRecording) {
+                showToast('⚠️ Cannot switch camera while recording, please stop first', 'error');
+                facingMode = facingMode === 'user' ? 'environment' : 'user'; // revert
+                return;
+            }
+            await initCamera();
+            showToast(facingMode === 'user' ? '📱 Front camera' : '🌍 Rear camera', 'success');
+        }
+
+        function takeSnapshot() {
+            if (!mediaStream || !previewVideo.srcObject) {
+                showToast('⚠️ Please start the camera first', 'error');
+                return;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = previewVideo.videoWidth || 1280;
+            canvas.height = previewVideo.videoHeight || 720;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(previewVideo, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            // Send snapshot to server
+            sendWSMessage({
+                type: 'snapshot',
+                image: dataUrl,
+                timestamp: Date.now()
+            });
+            // Also attempt HTTP send
+            fetch(API_BASE + '/snapshot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: dataUrl, timestamp: Date.now() })
+                })
+                .then(() => showToast('📸 Snapshot sent to computer', 'success'))
+                .catch(() => {
+                    // WebSocket already sent, silent
+                    showToast('📸 Snapshot captured', 'success');
+                });
+            // Flash effect
+            videoWrap.style.boxShadow = '0 0 60px rgba(255,255,255,0.7)';
+            setTimeout(() => { videoWrap.style.boxShadow = ''; }, 200);
+        }
+
+        // ---------- Recording ----------
+        function startRecording() {
+            if (!mediaStream) {
+                showToast('⚠️ Please start the camera first', 'error');
+                initCamera().then(() => {
+                    if (mediaStream) startRecordingInternal();
+                });
+                return;
+            }
+            startRecordingInternal();
+        }
+
+        function startRecordingInternal() {
+            if (isRecording) return;
+            recordedChunks = [];
+            const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ?
+                'video/webm;codecs=vp9' :
+                MediaRecorder.isTypeSupported('video/webm;codecs=vp8') ?
+                'video/webm;codecs=vp8' :
+                'video/webm';
+            try {
+                mediaRecorder = new MediaRecorder(mediaStream, {
+                    mimeType: mimeType,
+                    videoBitsPerSecond: 2500000,
+                    audioBitsPerSecond: 128000
+                });
+            } catch (e) {
+                mediaRecorder = new MediaRecorder(mediaStream);
+            }
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'video/webm' });
+                recordedChunks = [];
+                uploadRecording(blob);
+            };
+
+            mediaRecorder.start(1000); // produce a chunk every second
+            isRecording = true;
+            recordingStartTime = Date.now();
+            updateUIForRecording(true);
+            startTimer();
+            sendWSMessage({ type: 'recording_started', timestamp: Date.now() });
+            console.log('🔴 Recording started');
+        }
+
+        function stopRecording() {
+            if (!isRecording || !mediaRecorder) return;
+            mediaRecorder.stop();
+            isRecording = false;
+            updateUIForRecording(false);
+            stopTimer();
+            sendWSMessage({ type: 'recording_stopped', timestamp: Date.now() });
+            console.log('⏹️ Recording stopped');
+        }
+
+        function updateUIForRecording(recording) {
+            if (recording) {
+                videoWrap.classList.add('recording');
+                recIndicator.classList.add('active');
+                timerDisplay.classList.add('active');
+                btnRecord.classList.add('recording');
+                btnRecord.innerHTML = '⏹️ Stop Recording';
+                cameraCard.classList.add('active-recording');
+            } else {
+                videoWrap.classList.remove('recording');
+                recIndicator.classList.remove('active');
+                timerDisplay.classList.remove('active');
+                btnRecord.classList.remove('recording');
+                btnRecord.innerHTML = '⏺️ Start Recording';
+                cameraCard.classList.remove('active-recording');
+            }
+        }
+
+        function startTimer() {
+            stopTimer();
+            timerInterval = setInterval(() => {
+                const elapsed = Date.now() - recordingStartTime;
+                const sec = Math.floor(elapsed / 1000);
+                const min = Math.floor(sec / 60);
+                const s = sec % 60;
+                timerDisplay.textContent =
+                    String(min).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            }, 200);
+        }
+
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+            timerDisplay.textContent = '00:00';
+        }
+
+        // ---------- Upload Recording to Computer ----------
+        async function uploadRecording(blob) {
+            const filename = 'air_record_' + new Date().toISOString().replace(/[:.]/g, '-') + '.webm';
+            const sizeMB = (blob.size / 1024 / 1024).toFixed(1);
+            showToast(`📦 Uploading ${sizeMB}MB to computer...`, 'success');
+
+            const formData = new FormData();
+            formData.append('video', blob, filename);
+            formData.append('motion_data', JSON.stringify(motionData));
+            formData.append('recorded_at', new Date().toISOString());
+
+            try {
+                const response = await fetch(API_BASE + '/upload_recording', {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    showToast(`✅ Upload successful! ${sizeMB}MB`, 'success');
+                    refreshUploadList();
+                    sendWSMessage({ type: 'upload_complete_local', filename: filename, size: blob.size });
+                } else {
+                    throw new Error('Server error: ' + response.status);
+                }
+            } catch (err) {
+                console.error('Upload failed:', err);
+                showToast('❌ Upload failed, please check computer connection', 'error');
+                // Save locally as backup
+                saveLocally(blob, filename);
+            }
+        }
+
+        function saveLocally(blob, filename) {
+            try {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('💾 Saved to phone locally', 'success');
+            } catch (e) {
+                showToast('❌ Local save also failed', 'error');
+            }
+        }
+
+        // ---------- Refresh Upload List ----------
+        async function refreshUploadList() {
+            try {
+                const response = await fetch(API_BASE + '/recordings');
+                if (response.ok) {
+                    const data = await response.json();
+                    uploadedFiles = data.files || [];
+                    renderUploadList();
+                }
+            } catch (err) {
+                console.log('Failed to fetch list (server may not be running):', err.message);
+                // Silent
+            }
+        }
+
+        function renderUploadList() {
+            if (uploadedFiles.length === 0) {
+                uploadList.innerHTML =
+                    '<div style="color:var(--text2);text-align:center;padding:20px;font-size:0.8rem;">No recordings yet<br>Recorded videos will appear here</div>';
+                btnUploadAll.disabled = true;
+                return;
+            }
+            btnUploadAll.disabled = false;
+            uploadList.innerHTML = uploadedFiles.map((f, i) => {
+                const sizeMB = (f.size / 1024 / 1024).toFixed(1);
+                const statusClass = f.uploaded_to_bilibili ? 'status-done' :
+                    f.uploading ? 'status-uploading' : 'status-ready';
+                const statusText = f.uploaded_to_bilibili ? 'Published' : f.uploading ? 'Uploading' : 'Pending';
+                return `
+                    <div class="upload-item">
+                        <span class="upload-name" title="${f.name}">🎬 ${f.name}</span>
+                        <span class="upload-size">${sizeMB}MB</span>
+                        <span class="upload-status ${statusClass}">${statusText}</span>
+                        <button class="btn btn-secondary btn-sm" 
+                                onclick="uploadSingleToBilibili('${f.name}')" 
+                                ${f.uploaded_to_bilibili || f.uploading ? 'disabled' : ''}>
+                            📤
+                        </button>
+                    </div>`;
+            }).join('');
+        }
+
+        async function uploadSingleToBilibili(filename) {
+            showToast('🚀 Publishing to Bilibili...', 'success');
+            try {
+                const response = await fetch(API_BASE + '/upload_to_bilibili', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        filename: filename,
+                        title: 'Air Studio Recording - ' + new Date().toLocaleDateString('en-US'),
+                        desc: 'Recorded via Air Studio',
+                        tags: ['life record', 'AirStudio', 'daily']
+                    })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    showToast('✅ Submitted to Bilibili! BVID: ' + (result.bvid || 'Processing'), 'success');
+                    refreshUploadList();
+                } else {
+                    const errData = await response.json().catch(() => ({}));
+                    showToast('❌ Publish failed: ' + (errData.error || 'Unknown error'), 'error');
+                }
+            } catch (err) {
+                showToast('❌ Network error, please check computer connection', 'error');
+            }
+        }
+
+        async function uploadAllToBilibili() {
+            const pending = uploadedFiles.filter(f => !f.uploaded_to_bilibili && !f.uploading);
+            if (pending.length === 0) {
+                showToast('No videos pending for publishing', 'error');
+                return;
+            }
+            showToast(`🚀 Publishing ${pending.length} video(s)...`, 'success');
+            for (const f of pending) {
+                await uploadSingleToBilibili(f.name);
+                await new Promise(r => setTimeout(r, 1500));
+            }
+        }
+
+        // ---------- Air Motion: Device Motion Sensors ----------
+        function initMotionSensors() {
+            // DeviceMotionEvent
+            if (typeof DeviceMotionEvent !== 'undefined') {
+                // iOS 13+ requires permission request
+                if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                    motionStatus.textContent = '📱 Tap here to enable motion sensor';
+                    motionStatus.style.cursor = 'pointer';
+                    motionStatus.style.textDecoration = 'underline';
+                    motionStatus.onclick = async () => {
+                        try {
+                            const permission = await DeviceMotionEvent.requestPermission();
+                            if (permission === 'granted') {
+                                motionPermissionGranted = true;
+                                startMotionListening();
+                                motionStatus.textContent = '📱 Real-time device motion monitoring';
+                                motionStatus.style.cursor = 'default';
+                                motionStatus.style.textDecoration = 'none';
+                                motionStatus.onclick = null;
+                            } else {
+                                motionStatus.textContent = '⚠️ Motion sensor permission denied';
+                            }
+                        } catch (err) {
+                            console.log('Motion permission error:', err);
+                            motionStatus.textContent = '⚠️ Permission request failed';
+                        }
+                    };
+                } else {
+                    // Android or older iOS
+                    motionPermissionGranted = true;
+                    startMotionListening();
+                }
+            } else {
+                motionStatus.textContent = '⚠️ This device does not support motion sensor';
+                motionBadge.style.display = 'none';
+            }
+
+            // DeviceOrientationEvent as supplement
+            if (typeof DeviceOrientationEvent !== 'undefined') {
+                window.addEventListener('deviceorientation', (event) => {
+                    if (!motionPermissionGranted) return;
+                    // alpha: compass direction, beta: front/back tilt, gamma: left/right tilt
+                    const alpha = event.alpha || 0;
+                    const beta = event.beta || 0;
+                    const gamma = event.gamma || 0;
+                    // Merge into motionData
+                    motionData.alpha = alpha;
+                    motionData.beta = beta;
+                    motionData.gamma = gamma;
+                    sendWSMessage({
+                        type: 'orientation',
+                        alpha: alpha,
+                        beta: beta,
+                        gamma: gamma,
+                        timestamp: Date.now()
+                    });
+                }, true);
+            }
+        }
+
+        function startMotionListening() {
+            window.addEventListener('devicemotion', (event) => {
+                const acc = event.accelerationIncludingGravity;
+                if (acc) {
+                    motionData.x = acc.x || 0;
+                    motionData.y = acc.y || 0;
+                    motionData.z = acc.z || 9.81;
+                    updateMotionUI(motionData.x, motionData.y, motionData.z);
+                    // Throttled sending
+                    throttleSendMotion(motionData);
+                }
+            }, true);
+            motionBadge.textContent = '● sensing';
+            motionBadge.style.animation = 'pulse-glow-amber 1.5s ease-in-out infinite';
+        }
+
+        let lastMotionSend = 0;
+
+        function throttleSendMotion(data) {
+            const now = Date.now();
+            if (now - lastMotionSend < 100) return; // 100ms throttle
+            lastMotionSend = now;
+            sendWSMessage({
+                type: 'motion',
+                x: data.x,
+                y: data.y,
+                z: data.z,
+                alpha: data.alpha || 0,
+                beta: data.beta || 0,
+                gamma: data.gamma || 0,
+                timestamp: now
+            });
+        }
+
+        function updateMotionUI(x, y, z) {
+            document.getElementById('motionX').textContent = x.toFixed(2);
+            document.getElementById('motionY').textContent = y.toFixed(2);
+            document.getElementById('motionZ').textContent = z.toFixed(2);
+
+            // Normalize to 0-100% bar graph (assuming range -15 to +15)
+            const normX = Math.min(100, Math.max(0, ((x + 15) / 30) * 100));
+            const normY = Math.min(100, Math.max(0, ((y + 15) / 30) * 100));
+            const normZ = Math.min(100, Math.max(0, ((z) / 20) * 100));
+            document.getElementById('barX').style.width = normX + '%';
+            document.getElementById('barY').style.width = normY + '%';
+            document.getElementById('barZ').style.width = normZ + '%';
+        }
+
+        // ---------- Heartbeat ----------
+        function startHeartbeat() {
+            setInterval(() => {
+                sendWSMessage({ type: 'ping', timestamp: Date.now() });
+            }, 15000);
+        }
+
+        // ---------- Event Binding ----------
+        btnRecord.addEventListener('click', () => {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        });
+
+        btnSwitchCamera.addEventListener('click', switchCamera);
+        btnSnapshot.addEventListener('click', takeSnapshot);
+        btnUploadAll.addEventListener('click', uploadAllToBilibili);
+        btnRefreshList.addEventListener('click', refreshUploadList);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (isRecording) stopRecording();
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+            if (webSocket) webSocket.close();
+        });
+
+        // Page visibility change (e.g., phone lock)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isRecording) {
+                console.log('⚠️ Page hidden, recording still in progress');
+            }
+        });
+
+        // ---------- Initialization ----------
+        async function init() {
+            console.log('🌬️ Air Studio initializing...');
+            console.log('📡 Server URL:', SERVER_URL);
+            connectWebSocket();
+            await initCamera();
+            initMotionSensors();
+            startHeartbeat();
+            refreshUploadList();
+            console.log('✅ Air Studio ready');
+            console.log('   📷 Air Camera - ready');
+            console.log('   🎤 Air Micro Phone - ready');
+            console.log('   🌀 Air Motion - ready');
+            showToast('🌬️ Air Studio is ready', 'success');
+        }
+
+        // Start
+        init().catch(err => {
+            console.error('Initialization failed:', err);
+            showToast('⚠️ Initialization error, please refresh the page', 'error');
+        });
+
+        // ============================================================
+        console.log(`
+        ╔══════════════════════════════════════╗
+        ║     🌬️  Air Studio Frontend Loaded  ║
+        ║  Air Camera    📷 Video Capture     ║
+        ║  Air Micro Phone 🎤 Audio Capture   ║
+        ║  Air Motion    🌀 Motion Sensor     ║
+        ║  Bilibili Upload 📺 Video Publishing║
+        ║  Backend: ${SERVER_URL}  ║
+        ╚══════════════════════════════════════╝
+        `);
+    </script>
+</body>
+</html>
